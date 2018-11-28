@@ -5,7 +5,7 @@
 ## Par Mathieu Desgagnés, novembre 2017, basé sur les travaux de Hugo Bourdage et les scripts SAS de "PACES"
 ##
 ## Entrée: NGSL_Set.csv, NGSL_CAPT.csv, NGSL_Cbio.csv, stratum.sas7bdat
-##         à l'adresse: S:\Releves_Poissons_de_Fond_et_Crevette\Donnees_PACES
+##         à l'adresse: //dcqcimlna01a/bd_peches/Releves_Poissons_de_Fond_et_Crevettes/Donnees_PACES
 ## Sortie: lectureReleveNgsl.RData
 ##
 ## #####
@@ -52,7 +52,7 @@ lireReleveNgsl <- function(dirInput='', dirOutput=''){
     save(trait.rn,capt.rn,capt.trait.rn,long.trait.rn,stratum.rn, file=paste0(dirOutput,'lectureReleveNgsl.RData'))
 }
 if(FALSE){
-    lireReleveNgsl(dirInput='S:/Releves_Poissons_de_Fond_et_Crevette/Donnees_PACES/', dirOutput='')
+    lireReleveNgsl(dirInput='//dcqcimlna01a/bd_peches/Releves_Poissons_de_Fond_et_Crevettes/Donnees_PACES/', dirOutput='')
 }else{
     load('lectureReleveNgsl.RData', verbose=TRUE)
 }
@@ -104,7 +104,7 @@ lireReleveNgslAutre <- function(dirInput='', dirOutput='', type='LH'){
     }
 }
 if(FALSE){
-    lireReleveNgsl(dirInput='S:/Releves_Poissons_de_Fond_et_Crevette/Donnees_PACES/', dirOutput='')
+    lireReleveNgsl(dirInput='//dcqcimlna01a/bd_peches/Releves_Poissons_de_Fond_et_Crevettes/Donnees_PACES/', dirOutput='')
 }else{
     load('lectureReleveLH.RData', verbose=TRUE)
 }
