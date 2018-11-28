@@ -57,58 +57,6 @@ if(FALSE){
     load('lectureReleveNgsl.RData', verbose=TRUE)
 }
 
-lireReleveNgslAutre <- function(dirInput='', dirOutput='', type='LH'){
-    ## lire les relevés non convertis en "NGSL_xxx.csv"
-    ## relevés disponibles: AN, GA, LH, TE
-    print(paste0(dirInput,type,'_Set.csv'))
-    trait <- read.csv2(paste0(dirInput,type,'_Set.csv'), as.is=TRUE, dec='.', na.string='. ')  #produit par Denis Bernier
-    trait.rn <- trait[trait$resultat %in% c(1,2),]
-    names(trait.rn) <- c('source','noReleve','nbpc','noStation','annee','dateDeb','typeTrait','opano','profMoy','noStrate','engin','resultat','heureMoy','minuteMoy',
-                         'latitudeDeb','longitudeDeb','distanceVit','distanceCor','distancePos','ouvertureHori','tFond','saliniteFond','oxygene','cZonPec')
-    trait.rn$aire <- trait.rn$distanceVit*trait.rn$ouvertureHori #aire balayé
-    trait.rn$aire <- trait.rn$aire/mean(trait.rn$aire) #aire balayé par chaque trait, normalisée
-    trait.rn$X <- -floor(trait.rn$longitudeDeb/100)-trait.rn$longitudeDeb%%100/60 #longitude en décimal
-    trait.rn$Y <- floor(trait.rn$latitudeDeb/100)+trait.rn$latitudeDeb%%100/60 #latitude en décimal
-    trait.rn$date_deb <- as.Date(trait.rn$dateDeb, origin='1960-01-01')
-    trait.rn$mois <- month(trait.rn$dateDeb)
-    trait.rn$jour <- day(trait.rn$dateDeb)
-    print(paste0(dirInput,type,'_CAPT.csv'))
-    capt.init <- read.csv2(paste0(dirInput,type,'_CAPT.csv'), as.is=TRUE, dec='.', na.string='. ')  #produit par Denis Bernier
-    names(capt.init) <- c('source','noReleve','nbpc','noStation','espece','categ','pdsCapt','pdsEch','nbCapt','nbEch','tCar')
-    print(paste0(dirInput,'NGSL_Cbio.csv'))
-    dfl.init <- read.csv2(paste0(dirInput,type,'_Cbio.csv'), as.is=TRUE, dec='.', na.string='. ')  #produit par Denis Bernier
-    names(dfl.init) <- c('source','noReleve','nbpc','noStation','espece','categ','noSpecimen','typeEch','longueur','longP','sexe','maturite','pdsTot','age','etat','rayons','tCar',
-                         'noEtiq','noOriSp')
-    capt.rn <- subset(capt.init, espece==893) #flétan altantique
-    long.rn <- subset(dfl.init, espece==893)  #flétan altantique
-    capt.trait.rn <- merge(trait.rn, capt.rn, by.x=c('source','noReleve','nbpc','noStation'), by.y=c('source','noReleve','nbpc','noStation'), all=TRUE)
-    capt.trait.rn$pdsFletan <- capt.trait.rn$pdsCapt
-    capt.trait.rn$pdsFletan[is.na(capt.trait.rn$pdsFletan)] <- 0 #zero sinon
-    capt.trait.rn$nbFletan <- capt.trait.rn$nbCapt
-    capt.trait.rn$nbFletan[is.na(capt.trait.rn$nbFletan)] <- 0 #zero sinon
-    long.trait.rn <- merge(trait.rn, long.rn, by.x=c('source','noReleve','nbpc','noStation'), by.y=c('source','noReleve','nbpc','noStation'), all=TRUE)
-    long.trait.rn$longueur <- long.trait.rn$longueur/10 #en centimetre
-    print(paste0(dirInput,'stratum.sas7bdat'))
-    stratum.rn <- read.sas7bdat(paste0(dirInput,'stratum.sas7bdat')) #pas besion de mettre à jour
-    if(type=='LH'){
-        trait.rn.lh <- trait.rn; capt.rn.lh <- capt.rn; capt.trait.rn.lh <- capt.trait.rn; long.trait.rn.lh <- long.trait.rn; stratum.rn <- stratum.rn;
-        save(trait.rn.lh,capt.rn.lh,capt.trait.rn.lh,long.trait.rn.lh,stratum.rn, file=paste0(dirOutput,'lectureReleveLH.RData'))
-    }else{
-        if(type=='GA'){
-            trait.rn.ga <- trait.rn; capt.rn.ga <- capt.rn; capt.trait.rn.ga <- capt.trait.rn; long.trait.rn.ga <- long.trait.rn; stratum.rn <- stratum.rn;
-            save(trait.rn.ga,capt.rn.ga,capt.trait.rn.ga,long.trait.rn.ga,stratum.rn, file=paste0(dirOutput,'lectureReleveGA.RData'))
-        }else{                          #a mettre à jour si utilise les autres
-            trait.rn.xx <- trait.rn; capt.rn.xx <- capt.rn; capt.trait.rn.xx <- capt.trait.rn; long.trait.rn.xx <- long.trait.rn; stratum.rn <- stratum.rn;
-            save(trait.rn.xx,capt.rn.xx,capt.trait.rn.xx,long.trait.rn.xx,stratum.rn, file=paste0(dirOutput,'lectureReleveXX.RData'))
-        }
-    }
-}
-if(FALSE){
-    lireReleveNgsl(dirInput='//dcqcimlna01a/bd_peches/Releves_Poissons_de_Fond_et_Crevettes/Donnees_PACES/', dirOutput='')
-}else{
-    load('lectureReleveLH.RData', verbose=TRUE)
-}
-
 calculerIndiceAbondance <- function(annee, stratum, trait, capt, strates.init=NULL){
     ## trois étapes: 1)calcul des pue et nue 2)modèle multiplicatif 3)calcul des pue et nue total
     ## annee= vercteur des années disponible/à considérer (ex.   1990:2015 )
