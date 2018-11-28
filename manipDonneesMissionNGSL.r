@@ -1,4 +1,7 @@
 ## #####
+## ATTENTION!!! ce code est non-validé pour les espèces autres que le flétan atlantique. Les résultats obtenus pour le
+##              flétan atlantique sont légèrement différents des résultats du programme original, mais cette différence a été considérée
+##              comme négligeable. Des différences pourraient être plus importantes pour d'autres espèces.
 ##
 ## Lectures des données du relevé MPO NGSL
 ##
